@@ -1,0 +1,5 @@
+node_modules
+__pycache__
+/backend/assistant/chroma_db
+/backend/assistant/data
+venv

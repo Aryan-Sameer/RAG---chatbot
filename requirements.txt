@@ -1,0 +1,15 @@
+# core dependencies
+chromadb==0.4.24
+sentence-transformers==2.5.1
+numpy<2.0
+huggingface-hub>=0.34.0,<1.0
+einops
+fastapi[standard]
+
+# for ingestion
+pandas
+python-docx
+pypdf
+
+# for RAM monitoring
+psutil
