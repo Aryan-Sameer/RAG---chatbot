@@ -1,64 +1,55 @@
-# answer.py - Query RAG system and generate answer with Ollama LLM
-
-import chromadb
-from chromadb.config import Settings
 import argparse
-from sentence_transformers import SentenceTransformer, CrossEncoder
-import requests
+import os
 import time
 
 import psutil
-import os
-import torch
+from sentence_transformers import CrossEncoder
+
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.prompts import PromptTemplate
+from langchain_ollama import OllamaLLM
+
+EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
+RERANKER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
 
 def print_ram():
     process = psutil.Process(os.getpid())
     mem = process.memory_info().rss / 1024 / 1024
     print(f"RAM usage: {mem:.1f} MB")
 
-# ── Load models once at module level (not inside the function) ──────────────
-
-normic_model = 'C:\\Users\\Aryan Sameer\\.cache\\huggingface\\hub\\models--nomic-ai--nomic-embed-text-v1.5\\snapshots\\e5cf08aadaa33385f5990def41f7a23405aec398'
-reranker_model = 'C:\\Users\\Aryan Sameer\\.cache\\huggingface\\hub\\models--cross-encoder--ms-marco-MiniLM-L-6-v2\\snapshots\\c5ee24cb16019beea0893ab7796b1df96625c6b8'
 
 print("→ Loading embedding model...")
-embedding_model = SentenceTransformer(
-    normic_model,
-    trust_remote_code=True,
-    device='cpu'
+embedding_model = HuggingFaceEmbeddings(
+    model_name=EMBEDDING_MODEL_NAME,
+    model_kwargs={"device": "cpu", "trust_remote_code": True},
 )
-embedding_model.max_seq_length = 8192
 print_ram()
 
 print("→ Loading reranker model...")
 reranker = CrossEncoder(
-    reranker_model,
-    device='cpu'
+    RERANKER_MODEL_NAME,
+    device="cpu",
 )
 
-# ── Ollama HTTP call (replaces subprocess) ──────────────────────────────────
+PROMPT_TEMPLATE = PromptTemplate.from_template(
+    """You are a helpful assistant
+
+    Context:
+    {context}
+
+    Question: {question}
+    Answer:"""
+)
+
+
 def call_ollama(prompt, model):
     try:
-        torch.cuda.empty_cache
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={
-                "model": model,
-                "prompt": prompt,
-                "stream": False,
-                "options": {"num_ctx": 1024}
-            },
-            timeout=60
-        )
-        response.raise_for_status()
+        llm = OllamaLLM(model=model, num_ctx=1024, temperature=0)
+        answer = llm.invoke(prompt)
         print_ram()
-        return response.json()["response"].strip()
-    except requests.exceptions.Timeout:
-        print("✗ Timeout: LLM took too long to respond")
-        return None
-    except requests.exceptions.ConnectionError:
-        print("✗ Error: Cannot connect to Ollama. Is it running?")
-        return None
+        return (answer or "").strip()
     except Exception as e:
         print(f"✗ Error calling Ollama: {e}")
         return None
@@ -70,18 +61,18 @@ def query_and_answer(question, db_path="./chroma_db", n_results=3, model="smollm
 
     # Generate query embedding
     print("→ Generating query embedding...")
-    query_embedding = embedding_model.encode([question], convert_to_numpy=True)[0]
+    query_embedding = embedding_model.embed_query(question)
     print_ram()
 
     # Connect to ChromaDB
     print(f"→ Connecting to ChromaDB at {db_path}...")
-    client = chromadb.PersistentClient(
-        path=db_path,
-        settings=Settings(anonymized_telemetry=False)
-    )
-
     try:
-        collection = client.get_collection(name="documents")
+        vectorstore = Chroma(
+            collection_name="documents",
+            persist_directory=db_path,
+            embedding_function=embedding_model,
+        )
+        collection = vectorstore._collection
         print(f"✓ Connected to collection with {collection.count()} documents")
     except Exception as e:
         print("✗ Error: Collection not found. Run setup.py first.")
@@ -91,8 +82,9 @@ def query_and_answer(question, db_path="./chroma_db", n_results=3, model="smollm
     fetch_k = max(n_results * 3, 10)
     print(f"→ Retrieving top {fetch_k} candidate chunks for reranking...")
     results = collection.query(
-        query_embeddings=[query_embedding.tolist()],
-        n_results=fetch_k
+        query_embeddings=[query_embedding],
+        n_results=fetch_k,
+        include=["documents", "metadatas", "distances"],
     )
 
     if not results['documents'][0]:
@@ -127,13 +119,7 @@ def query_and_answer(question, db_path="./chroma_db", n_results=3, model="smollm
     context = "\n\n".join(contexts)
 
     # Step 4: Build simplified prompt (suitable for small models)
-    prompt = f"""You are a helpful assistant
-
-    Context:
-    {context}
-
-    Question: {question}
-    Answer:"""
+    prompt = PROMPT_TEMPLATE.format(context=context, question=question)
 
     print(f"→ Generating answer with {model}...")
     print("\n" + "=" * 80)

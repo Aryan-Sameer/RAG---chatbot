@@ -1,9 +1,10 @@
 # query.py - Query the RAG system and retrieve top results
 
-import chromadb
-from chromadb.config import Settings
 import argparse
-from sentence_transformers import SentenceTransformer
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+
+EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
 def query_database(question, db_path="./chroma_db", n_results=5):
     """Query ChromaDB and return top results"""
@@ -11,43 +12,47 @@ def query_database(question, db_path="./chroma_db", n_results=5):
     # Load embedding model
     print(f"→ Loading nomic-embed-text-v1 model...")
     try:
-        model = SentenceTransformer(
-            'nomic-ai/nomic-embed-text-v1.5',
-            trust_remote_code=True,
-            device='cuda'
+        model = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL_NAME,
+            model_kwargs={
+                "device": "cuda",
+                "trust_remote_code": True,
+            }
         )
-        model.max_seq_length = 8192
         print("✓ Model loaded on CUDA")
     except Exception as e:
         print(f"⚠ CUDA not available, using CPU: {e}")
-        model = SentenceTransformer(
-            'nomic-ai/nomic-embed-text-v1.5',
-            trust_remote_code=True
+        model = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL_NAME,
+            model_kwargs={
+                "device": "cpu",
+                "trust_remote_code": True,
+            }
         )
     
     # Generate query embedding
     print(f"→ Generating query embedding...")
-    query_embedding = model.encode([question], convert_to_numpy=True)[0]
+    query_embedding = model.embed_query(question)
     
     # Connect to ChromaDB
     print(f"→ Connecting to ChromaDB at {db_path}...")
-    client = chromadb.PersistentClient(
-        path=db_path,
-        settings=Settings(anonymized_telemetry=False)
-    )
-    
     try:
-        collection = client.get_collection(name="documents")
-        print(f"✓ Connected to collection with {collection.count()} documents")
+        collection = Chroma(
+            collection_name="documents",
+            persist_directory=db_path,
+            embedding_function=model,
+        )
+        print(f"✓ Connected to collection with {collection._collection.count()} documents")
     except Exception as e:
         print(f"✗ Error: Collection not found. Run setup.py first.")
         return False
     
     # Query collection
     print(f"→ Querying for top {n_results} results...")
-    results = collection.query(
-        query_embeddings=[query_embedding.tolist()],
-        n_results=n_results
+    results = collection._collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"],
     )
     
     # Print results

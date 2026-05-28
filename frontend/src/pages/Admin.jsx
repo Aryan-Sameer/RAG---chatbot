@@ -13,6 +13,7 @@ const Admin = () => {
   const [setupMsg, setSetupMsg] = useState('');
   const [ingestStatus, setIngestStatus] = useState(null);
   const [ingestMsg, setIngestMsg] = useState('');
+  const [isActionRunning, setIsActionRunning] = useState(false);
   const [kbFiles, setKbFiles] = useState([]);
   const [kbFilesStatus, setKbFilesStatus] = useState('idle');
   const [kbFilesMsg, setKbFilesMsg] = useState('');
@@ -30,16 +31,28 @@ const Admin = () => {
 
 
   // RAG handlers
-  const handleSetup = async () => {
+  const runSetup = async () => {
     setSetupStatus('loading');
     setSetupMsg('');
     try {
       const res = await axios.post(`${RAG_API}/setup`);
       setSetupStatus('success');
       setSetupMsg(res.data.message);
+      return true;
     } catch (err) {
       setSetupStatus('error');
       setSetupMsg(err.response?.data?.detail || 'Setup failed');
+      return false;
+    }
+  };
+
+  const handleSetup = async () => {
+    if (isActionRunning) return false;
+    setIsActionRunning(true);
+    try {
+      return await runSetup();
+    } finally {
+      setIsActionRunning(false);
     }
   };
 
@@ -63,9 +76,17 @@ const Admin = () => {
   }, [isAuthenticated]);
 
   const handleIngest = async (forceRebuild = false) => {
+    if (isActionRunning) return;
+    setIsActionRunning(true);
     setIngestStatus('loading');
     setIngestMsg('');
     try {
+      const setupOk = setupStatus === 'success' ? true : await runSetup();
+      if (!setupOk) {
+        setIngestStatus('error');
+        setIngestMsg('Setup failed. Please fix setup and try ingestion again.');
+        return;
+      }
       const res = await axios.post(`${RAG_API}/ingest?force_rebuild=${forceRebuild}`);
       setIngestStatus('success');
       setIngestMsg(res.data.message || 'Ingestion completed');
@@ -73,6 +94,8 @@ const Admin = () => {
     } catch (err) {
       setIngestStatus('error');
       setIngestMsg(err.response?.data?.detail || 'Ingestion failed');
+    } finally {
+      setIsActionRunning(false);
     }
   };
 
@@ -115,9 +138,9 @@ const Admin = () => {
           <p className="text-xs text-gray-400 mb-3">Initialize ChromaDB collection</p>
           <button
             onClick={handleSetup}
-            disabled={setupStatus === 'loading'}
+            disabled={isActionRunning}
             className={`w-full p-2 rounded text-sm font-medium cursor-pointer transition-colors
-                ${setupStatus === 'loading'
+                ${isActionRunning
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-800 text-white hover:bg-gray-700'}`}
           >
@@ -136,9 +159,9 @@ const Admin = () => {
           <p className="text-xs text-gray-400 mb-3">Smart ingest skips when files are unchanged</p>
           <button
             onClick={() => handleIngest(false)}
-            disabled={ingestStatus === 'loading'}
+            disabled={isActionRunning}
             className={`w-full p-2 rounded text-sm font-medium cursor-pointer transition-colors
-                ${ingestStatus === 'loading'
+                ${isActionRunning
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-800 text-white hover:bg-gray-700'}`}
           >
@@ -146,9 +169,9 @@ const Admin = () => {
           </button>
           <button
             onClick={() => handleIngest(true)}
-            disabled={ingestStatus === 'loading'}
+            disabled={isActionRunning}
             className={`w-full p-2 rounded text-sm font-medium cursor-pointer transition-colors mt-2
-                ${ingestStatus === 'loading'
+                ${isActionRunning
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
           >

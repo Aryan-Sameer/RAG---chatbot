@@ -3,6 +3,10 @@
 import chromadb
 from chromadb.config import Settings
 import os
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+
+EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
 def setup_database(db_path="./chroma_db"):
     """Initialize ChromaDB with persistent storage"""
@@ -21,13 +25,22 @@ def setup_database(db_path="./chroma_db"):
     
     # Create or get collection
     try:
-        collection = client.get_or_create_collection(
+        client.get_or_create_collection(
             name="documents",
             metadata={"hnsw:space": "cosine"}
         )
+        embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL_NAME,
+            model_kwargs={"device": "cpu", "trust_remote_code": True},
+        )
+        collection = Chroma(
+            collection_name="documents",
+            persist_directory=db_path,
+            embedding_function=embeddings,
+        )
         print(f"✓ Collection 'documents' ready")
         print(f"✓ Database location: {db_path}")
-        print(f"✓ Current document count: {collection.count()}")
+        print(f"✓ Current document count: {collection._collection.count()}")
         
     except Exception as e:
         print(f"✗ Error creating collection: {e}")

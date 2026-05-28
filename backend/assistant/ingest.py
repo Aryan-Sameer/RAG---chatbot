@@ -7,12 +7,22 @@ from datetime import datetime, timezone
 import pandas as pd
 from docx import Document
 from pypdf import PdfReader
-import chromadb
-from sentence_transformers import SentenceTransformer
+from langchain_core.documents import Document as LCDocument
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".xls", ".md", ".txt"}
 COLLECTION_NAME = "documents"
 MANIFEST_FILE = ".ingest_manifest.json"
+EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
+
+
+def _build_embedding_model():
+    return HuggingFaceEmbeddings(
+        model_name=EMBEDDING_MODEL_NAME,
+        model_kwargs={"device": "cpu", "trust_remote_code": True},
+    )
 
 def extract_text(file_path):
     ext = os.path.splitext(file_path)[1].lower()
@@ -134,17 +144,29 @@ def run_folder_ingestion(folder_path="./data", db_path="./chroma_db", force_rebu
             "chunks_ingested": 0,
         }
 
-    # Load Model (CPU to save VRAM for later)
-    model = SentenceTransformer('nomic-ai/nomic-embed-text-v1.5', trust_remote_code=True, device='cpu')
-    client = chromadb.PersistentClient(path=db_path)
+    embeddings = _build_embedding_model()
     if force_rebuild or changed:
         try:
-            client.delete_collection(name=COLLECTION_NAME)
+            existing_store = Chroma(
+                collection_name=COLLECTION_NAME,
+                persist_directory=db_path,
+                embedding_function=embeddings,
+            )
+            existing_store.delete_collection()
             print(f"✓ Deleted existing collection '{COLLECTION_NAME}' for rebuild.")
         except Exception:
             # Collection might not exist yet, which is fine.
             pass
-    collection = client.get_or_create_collection(name=COLLECTION_NAME)
+    vectorstore = Chroma(
+        collection_name=COLLECTION_NAME,
+        persist_directory=db_path,
+        embedding_function=embeddings,
+    )
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=450,
+        chunk_overlap=150,
+        separators=["\n\n", "\n", " ", ""],
+    )
 
     files_processed = 0
     chunks_ingested = 0
@@ -154,16 +176,16 @@ def run_folder_ingestion(folder_path="./data", db_path="./chroma_db", force_rebu
         print(f"→ Processing {filename}...")
         raw_text = extract_text(file_path)
         if raw_text:
-            # Simple chunking logic (can be refined)
-            chunks = [raw_text[i:i+450] for i in range(0, len(raw_text), 300)]
+            chunks = splitter.split_text(raw_text)
             if not chunks:
                 continue
-            embeddings = model.encode(chunks)
-
             ids = [f"{filename}_{i}" for i in range(len(chunks))]
-            metadatas = [{"source": filename} for _ in range(len(chunks))]
-
-            collection.add(ids=ids, embeddings=embeddings.tolist(), documents=chunks, metadatas=metadatas)
+            metadatas = [{"source": filename, "chunk_index": i} for i in range(len(chunks))]
+            documents = [
+                LCDocument(page_content=chunk, metadata=metadata)
+                for chunk, metadata in zip(chunks, metadatas)
+            ]
+            vectorstore.add_documents(documents=documents, ids=ids)
             print(f"✓ Ingested {filename}")
             files_processed += 1
             chunks_ingested += len(chunks)
