@@ -1,13 +1,18 @@
 import sys
 import os
-from fastapi import FastAPI, HTTPException
+from typing import List
+
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from fastapi import Query
- 
 from assistant.setup import setup_database
-from assistant.ingest import run_folder_ingestion, list_knowledge_base_files
+from assistant.ingest import (
+    run_folder_ingestion,
+    list_knowledge_base_files,
+    save_uploaded_files,
+    SUPPORTED_EXTENSIONS,
+)
 from assistant.answer import query_and_answer
  
 sys.path.append(os.path.join(os.path.dirname(__file__), "assistant"))
@@ -66,6 +71,37 @@ def knowledgebase_files():
     try:
         files = list_knowledge_base_files(folder_path=DATA_PATH)
         return {"success": True, "files": files}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/knowledgebase/upload")
+async def upload_knowledgebase_files(files: List[UploadFile] = File(...)):
+    if not files:
+        raise HTTPException(status_code=400, detail="No files provided.")
+    try:
+        uploads = []
+        for upload in files:
+            content = await upload.read()
+            if not content:
+                continue
+            uploads.append((upload.filename or "unnamed", content))
+        if not uploads:
+            raise HTTPException(status_code=400, detail="All uploaded files were empty.")
+
+        saved, errors = save_uploaded_files(DATA_PATH, uploads)
+        if not saved and errors:
+            raise HTTPException(status_code=400, detail="; ".join(errors))
+
+        return {
+            "success": True,
+            "saved": saved,
+            "errors": errors,
+            "message": f"Uploaded {len(saved)} file(s) to knowledge base.",
+            "allowed_extensions": sorted(SUPPORTED_EXTENSIONS),
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
  

@@ -2,7 +2,7 @@
 
 .assistant-page {
   display: flex;
-  height: 100vh;
+  height: 100%;
   background: #f7f6f3;
   font-family: "DM Sans", sans-serif;
 }
@@ -174,8 +174,7 @@
 }
 
 .assistant-input-area {
-  padding: 12px 32px;
-  background: #faf9f7;
+  padding: 12px 18px;
   border-top: 1px solid #e8e6e0;
 }
 
@@ -239,4 +238,12 @@
 .assistant-send-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.assistant-disclaimer {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #9a968e;
+  line-height: 1.4;
 }

@@ -100,6 +100,36 @@ def _write_manifest(db_path, files_manifest):
         json.dump(payload, f, indent=2)
 
 
+def save_uploaded_files(folder_path, uploads):
+    """Save uploaded files to the knowledge-base folder.
+
+    uploads: iterable of (filename, file_bytes)
+    Returns list of saved file metadata dicts.
+    """
+    os.makedirs(folder_path, exist_ok=True)
+    saved = []
+    errors = []
+
+    for filename, content in uploads:
+        safe_name = os.path.basename(filename)
+        ext = os.path.splitext(safe_name)[1].lower()
+        if ext not in SUPPORTED_EXTENSIONS:
+            errors.append(f"{safe_name}: unsupported type (allowed: {', '.join(sorted(SUPPORTED_EXTENSIONS))})")
+            continue
+        dest = os.path.join(folder_path, safe_name)
+        with open(dest, "wb") as f:
+            f.write(content)
+        stat = os.stat(dest)
+        saved.append({
+            "name": safe_name,
+            "size_bytes": stat.st_size,
+            "modified_at": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+            "extension": ext,
+        })
+
+    return saved, errors
+
+
 def list_knowledge_base_files(folder_path="./data"):
     if not os.path.exists(folder_path):
         return []

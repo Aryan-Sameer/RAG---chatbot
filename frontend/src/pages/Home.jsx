@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import AssistantMessage from "../components/AssistantMessage";
 import TypingIndicator from "../components/TypingIndicator";
+import { API_BASE } from "../config";
 import "../components/assistant.css";
-
-const API = "http://localhost:8000";
 
 export default function Home() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Hello! I'm your EEE department assistant. How can i help you?",
+      text: "Hello! I'm VNRGPT, your campus. I'll help you assist with your queries about the campus.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -30,7 +29,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/chat`, {
+      const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question }),
@@ -57,11 +56,9 @@ export default function Home() {
   }
 
   return (
-    <section className="assistant-page w-full h-screen flex bg-stone-100">
-
-      <main className="assistant-main flex-1 flex flex-col overflow-hidden">
-
-        <div className="assistant-messages-area flex-1 overflow-y-auto flex flex-col">
+    <section className="assistant-page h-full">
+      <main className="assistant-main max-w-6xl mx-auto">
+        <div className="assistant-messages-area">
           {messages.map((msg, i) => (
             <AssistantMessage key={i} msg={msg} />
           ))}
@@ -69,33 +66,43 @@ export default function Home() {
           <div ref={bottomRef} />
         </div>
 
-        <div className="assistant-input-area border-t">
-          <div className="assistant-input-wrapper flex items-end">
+        <div className="assistant-input-area">
+          <div className="assistant-input-wrapper">
             <textarea
               ref={inputRef}
-              className="assistant-chat-input flex-1"
-              placeholder="what's your query?"
+              className="assistant-chat-input"
+              placeholder="Ask VNRGPT about your department resources…"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKey}
               rows={1}
             />
             <button
-              className="assistant-send-btn flex items-center justify-center"
+              className="assistant-send-btn"
               onClick={sendMessage}
               disabled={loading || !input.trim()}
               aria-label="Send"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="22" y1="2" x2="11" y2="13" />
                 <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
             </button>
           </div>
+          <p className="assistant-disclaimer">
+            VNRGPT is an AI assistant and can make mistakes. Please verify important information
+            with department faculty.
+          </p>
         </div>
-        <small className="text-center mb-2">
-          BRO-GPT is an AI and can make mistakes. Please consult department faculty for accurate information.
-        </small>
       </main>
     </section>
   );
