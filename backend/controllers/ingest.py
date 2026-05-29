@@ -130,7 +130,7 @@ def save_uploaded_files(folder_path, uploads):
     return saved, errors
 
 
-def list_knowledge_base_files(folder_path="./data"):
+def list_knowledge_base_files(folder_path="./database/context"):
     if not os.path.exists(folder_path):
         return []
     records = []
@@ -145,7 +145,7 @@ def list_knowledge_base_files(folder_path="./data"):
     return records
 
 
-def run_folder_ingestion(folder_path="./data", db_path="./chroma_db", force_rebuild=False):
+def run_folder_ingestion(folder_path="./database/context", db_path="./database/chroma_db", force_rebuild=False):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         print(f"Created {folder_path} folder. Add your files there!")

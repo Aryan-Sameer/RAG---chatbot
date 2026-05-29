@@ -6,16 +6,16 @@ from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from assistant.setup import setup_database
-from assistant.ingest import (
+from controllers.setup import setup_database
+from controllers.ingest import (
     run_folder_ingestion,
     list_knowledge_base_files,
     save_uploaded_files,
     SUPPORTED_EXTENSIONS,
 )
-from assistant.answer import query_and_answer
+from controllers.answer import query_and_answer
  
-sys.path.append(os.path.join(os.path.dirname(__file__), "assistant"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "controllers"))
 
 app = FastAPI()
 
@@ -27,8 +27,8 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-DB_PATH = "./assistant/chroma_db"
-DATA_PATH = "./assistant/data"
+DB_PATH = "./database/chroma_db"
+DATA_PATH = "./database/context"
 
 class ChatRequest(BaseModel):
     question: str

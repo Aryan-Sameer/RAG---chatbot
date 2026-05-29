@@ -34,7 +34,8 @@ reranker = CrossEncoder(
 )
 
 PROMPT_TEMPLATE = PromptTemplate.from_template(
-    """You are a helpful assistant
+    """You are a helpful assistant. answer the questions based on the provided context only.
+    if the question is not related to the context, say "I dont know"
 
     Context:
     {context}
@@ -55,7 +56,7 @@ def call_ollama(prompt, model):
         return None
 
 # ── Main query function ─────────────────────────────────────────────────────
-def query_and_answer(question, db_path="./chroma_db", n_results=3, model="smollm2:360m"):
+def query_and_answer(question, db_path="./database/chroma_db", n_results=3, model="smollm2:360m"):
 
     start = time.time()
 
@@ -153,7 +154,7 @@ def query_and_answer(question, db_path="./chroma_db", n_results=3, model="smollm
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query RAG system with LLM answer generation")
     parser.add_argument("question", help="Question to ask")
-    parser.add_argument("--db", default="./chroma_db", help="Database path (default: ./chroma_db)")
+    parser.add_argument("--db", default="./database/chroma_db", help="Database path (default: ./database/chroma_db)")
     parser.add_argument("--top-k", type=int, default=3, help="Number of chunks to retrieve after reranking (default: 3)")
     parser.add_argument("--model", default="smollm2:360m", help="Ollama model to use (default: smollm2:360m)")
 

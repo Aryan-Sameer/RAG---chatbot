@@ -6,7 +6,7 @@ from langchain_chroma import Chroma
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
-def query_database(question, db_path="./chroma_db", n_results=5):
+def query_database(question, db_path="./database/chroma_db", n_results=5):
     """Query ChromaDB and return top results"""
     
     # Load embedding model
@@ -82,7 +82,7 @@ def query_database(question, db_path="./chroma_db", n_results=5):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query the RAG system")
     parser.add_argument("question", help="Question to ask")
-    parser.add_argument("--db", default="./chroma_db", help="Database path (default: ./chroma_db)")
+    parser.add_argument("--db", default="./database/chroma_db", help="Database path (default: ./database/chroma_db)")
     parser.add_argument("--top-k", type=int, default=5, help="Number of results to return (default: 5)")
     
     args = parser.parse_args()

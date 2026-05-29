@@ -8,7 +8,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
-def setup_database(db_path="./chroma_db"):
+def setup_database(db_path="./database/chroma_db"):
     """Initialize ChromaDB with persistent storage"""
     
     # Create directory if it doesn't exist
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Initialize ChromaDB for RAG system")
-    parser.add_argument("--path", default="./chroma_db", help="Database path (default: ./chroma_db)")
+    parser.add_argument("--path", default="./database/chroma_db", help="Database path (default: ./database/chroma_db)")
     parser.add_argument("--reset", action="store_true", help="Reset existing database")
     
     args = parser.parse_args()

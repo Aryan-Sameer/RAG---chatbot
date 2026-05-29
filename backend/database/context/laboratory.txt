@@ -1,0 +1,160 @@
+
+--- EEE department laboratory infastructure ---
+
+VNRVJIET Electrical and Electronics Engineering Infrastructure
+Below is the categorized information for the laboratories under the Department of Electrical and Electronics Engineering.
+There are 10 labs in the Department
+
+1. Network Analysis Laboratory
+Background: Provides the foundation for EEE, focusing on 3-phase and single-phase circuits. It is designed for active component analysis, including the design and testing of amplifiers and oscillators.
+
+Description: Well-equipped for analog, digital, and mixed-signal circuit testing. It remains open after college hours for student projects.
+
+Current Equipment: Analog and Digital Storage Oscilloscopes, VHF Function Generators, Power supplies, Decade boxes (R, L, C), 3-Phase Load/Supply, and PCs for system design.
+
+Lab Investment: Rs. 10,14,856.45/-
+
+Location: Room No. A-308
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Mrs. K. Sravani (Asst. Prof) / Mrs. V. Malleswari (Instructor)
+
+2. Electrical Machines Laboratory
+Background: The core lab of the department where students get real-time experience with various electrical machines.
+
+Description: Upgraded via AICTE MODROBS for data acquisition-based design. Supports regular academics, student projects, and research.
+
+Current Equipment: BLDC motor, PMSM motor, DC/AC Motors and Generators, Transformers, and Ansys Maxwell software for machine design.
+
+Lab Investment: Rs. 29,00,000/-
+
+Location: Room No. S3-1
+
+Hours: 9:00 AM - 5:00 PM
+
+Contact: Mr. G.C. Prabhakar (Asst. Prof) / Mr. P.H. Syam Rao (Sr. Skilled Asst.)
+
+3. Basic Electrical Engineering Laboratory
+Background: Dedicated to undergraduate students across various branches (ECE, CSE, IT, ME, etc.) to learn fundamental electricity concepts.
+
+Key Topics: Ohm’s Law, Kirchhoff’s Laws, Circuit Building (Breadboards), Measurement (Multimeters/Oscilloscopes), and Diode/Transistor characteristics.
+
+Current Equipment: DC Compound motors, DC Shunt motor-generator sets, 3-phase squirrel cage induction motors, and 1-phase transformers.
+
+Lab Investment: Rs. 10,37,791/-
+
+Location: Room No. S1-2
+
+Hours: 9:00 AM - 5:00 PM
+
+Contact: Mr. N. Amarnadh Reddy (Asst. Prof) / P.H. Sham Rao (Sr. Skilled Asst.)
+
+4. Power Electronics Lab
+Background: Focuses on research and development for closed-loop control of power electronic converters (AC and DC).
+
+Description: Includes study of SCR, MOSFET, and IGBT characteristics, as well as the operation of rectifiers, choppers, inverters, and cycloconverters.
+
+Current Equipment: PWM inverters, Half/Full controlled rectifiers, MOSFET-based step-up/step-down choppers, and Digital Storage Oscilloscopes (DSO).
+
+Lab Investment: Rs. 15,27,176/-
+
+Location: Room No. A-310
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Dr. G. Lakshminarayana (Asst. Prof) / Mr. M. Rama Krishna Das (Instructor)
+
+5. Control Systems Laboratory
+Background: Provides the foundation for control system study, analysis, and design, moving toward AI-based controllers.
+
+Description: Equipped with specialized hardware like SCADA and Stepper motors for system study.
+
+Current Equipment: PID Controller Kits, Magnetic Amplifiers, AC/DC Servo Motors, Lead-Lag Networks, Stepper motor with 8085 Mp kit, and Temperature Control Systems.
+
+Lab Investment: Rs. 23,42,117/-
+
+Location: Room No. A-309
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Dr. G. Radhika (Sr. Asst. Prof) / V. Malleshwari (Instructor)
+
+6. Simulation & Microprocessor Labs (Combined)
+Simulation of Electrical Systems Laboratory
+Scope: Software-based learning for C-Programming, Data Structures, and AutoCAD.
+
+Software: MATLAB, Python, AutoCAD, Code Blocks, MiPower, and EMTP.
+
+Microprocessor and Microcontroller Laboratory
+Scope: Training in assembly language, interfacing programmable chips, and hardware/software integration.
+
+Equipment: 8086 kits, 8051 kits, ARM Controller kits, and various interfacing modules (ADC/DAC, Stepper motors).
+
+Lab Investment (Combined): Rs. 1,08,30,110/-
+
+Location: Room No. A-306
+
+Hours: 9:00 AM - 5:00 PM
+
+Contact: Mr. B. Ganesh Babu (Asst. Prof) / Mr. B. Venkatesh & Mrs. S. Shilpa (Skilled Assts.)
+
+7. Electrical Measurements & Instrumentation Laboratory
+Background: Established in 1995, utilized by UG/PG students and faculty for regular lab work and research projects.
+
+Description: Facilities to measure Resistance, Inductance, and Capacitance. Also tests insulation strength of transformer oil.
+
+Current Equipment: Dielectric Oil testing kit, CT/PT Test sets, Three-phase auto transformers, Potentiometers, and Energy meters.
+
+Lab Investment: Rs. 10,35,868/-
+
+Location: Room No. A-313
+
+Hours: 9:00 AM - 5:00 PM
+
+Contact: M. Naga Jyothi (Asst. Prof) / K. Radhika (Sr. Skilled Asst.)
+
+8. Power Systems Laboratory
+Background: Focuses on the analysis of relays, protection schemes, and power system circuits.
+
+Description: Features transmission line models, synchronous machines, and various electromagnetic relays for B.Tech and M.Tech research.
+
+Current Equipment: IDMT Over-current relays, Microprocessor-based UV/OV relays, Differential protection of transformers, and Under-ground cable testing setups.
+
+Lab Investment: Rs. 15,98,295/-
+
+Location: Room No. A-307
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Mrs. Seelam Poornima (Asst. Prof) / Mr. B. Sivaji (Instructor)
+
+9. Power Converters Lab (Post Graduate)
+Background: Research and development lab specifically for M.Tech students focusing on drive systems and advanced converters.
+
+Description: Modern setups for PMSM & BLDC drives and four-quadrant chopper drives.
+
+Current Equipment: Solar PV training system, Three-phase IGBT inverters, Vector control drives, and Cycloconverters.
+
+Lab Investment: Rs. 16,19,166/-
+
+Location: Room No. P-208
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Dr. J. Srinivasa Rao (Assoc. Prof) / Mr. M. Rama Krishna Das (Instructor)
+
+10. Electrical Systems Simulation Laboratory (Post Graduate)
+Background: Dedicated to PG students specializing in Power Electronics and Power Systems for advanced simulation experiments.
+
+Current Equipment: High-end software including MATLAB, MiPOWER, and EMTP.
+
+Utilization: Python for Electrical Systems, Dynamics Laboratory, and FACTS analysis.
+
+Lab Investment: Rs. 25,61,143/-
+
+Location: Room No. P-209
+
+Hours: 9:00 AM - 6:30 PM
+
+Contact: Dr. K. Veeresham (Assoc. Prof) / A. Geeta (Sr. Skilled Asst.)

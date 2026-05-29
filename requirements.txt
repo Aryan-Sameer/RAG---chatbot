@@ -4,6 +4,7 @@ sentence-transformers==2.6.1
 numpy<2.0
 huggingface-hub>=0.34.0,<1.0
 einops
+
 fastapi[standard]
 langchain==0.2.17
 langchain-core==0.2.43
@@ -16,6 +17,7 @@ langchain-ollama==0.1.3
 pandas
 python-docx
 pypdf
+openpyxl
 
 # for RAM monitoring
 psutil

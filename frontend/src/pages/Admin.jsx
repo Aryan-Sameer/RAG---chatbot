@@ -5,9 +5,6 @@ import { API_BASE } from "../config";
 const ALLOWED_EXTENSIONS = ".pdf,.docx,.xlsx,.xls,.md,.txt";
 
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [adminPassInput, setAdminPassInput] = useState("");
-
   const [setupStatus, setSetupStatus] = useState(null);
   const [setupMsg, setSetupMsg] = useState("");
   const [ingestStatus, setIngestStatus] = useState(null);
@@ -23,15 +20,6 @@ const Admin = () => {
   const [uploadMsg, setUploadMsg] = useState("");
   const [autoIngestAfterUpload, setAutoIngestAfterUpload] = useState(true);
   const fileInputRef = useRef(null);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (adminPassInput === "password") {
-      setIsAuthenticated(true);
-    } else {
-      alert("Incorrect admin password");
-    }
-  };
 
   const runSetup = async ({ silent = false } = {}) => {
     if (!silent) {
@@ -80,10 +68,8 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchKnowledgebaseFiles();
-    }
-  }, [isAuthenticated]);
+    fetchKnowledgebaseFiles();
+  }, []);
 
   const handleIngest = async (forceRebuild = false, { bypassLock = false } = {}) => {
     if (!bypassLock && isActionRunning) return;
@@ -162,39 +148,8 @@ const Admin = () => {
     if (e.dataTransfer.files?.length) handleUpload(e.dataTransfer.files);
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="flex h-full items-center justify-center bg-gradient-to-b from-stone-100 to-stone-200 p-6">
-        <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-8 shadow-lg">
-          <div className="mb-6 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg font-bold text-white">
-              V
-            </div>
-            <h2 className="text-xl font-semibold text-stone-900">VNRGPT Admin</h2>
-            <p className="mt-1 text-sm text-stone-500">Manage knowledge base &amp; ingestion</p>
-          </div>
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <input
-              type="password"
-              placeholder="Admin password"
-              className="rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-              value={adminPassInput}
-              onChange={(e) => setAdminPassInput(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-stone-900 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800"
-            >
-              Sign in
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-full overflow-y-auto bg-gradient-to-b from-stone-100 to-stone-200">
+    <div className="h-full overflow-y-auto bg-linear-to-b from-stone-100 to-stone-200">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <header className="mb-8 text-center">
           <h1 className="text-2xl font-semibold text-stone-900">Knowledge Base</h1>
@@ -212,7 +167,7 @@ const Admin = () => {
         <section className="mb-6 rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-stone-800">Upload documents</h2>
           <p className="mt-1 text-xs text-stone-500">
-            Files are saved to <code className="rounded bg-stone-100 px-1">backend/assistant/data</code>.
+            Files are saved to <code className="rounded bg-stone-100 px-1">backend/database/context</code>.
             Supported: PDF, DOCX, XLSX, XLS, MD, TXT.
           </p>
 

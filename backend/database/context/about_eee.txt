@@ -1,0 +1,101 @@
+--- About EEE department ---
+
+ABOUT EEE (Electrical & Electronics Engineering) department -
+HOD (head of the department) - Dr.V. Ramesh Babu
+email of HOD - eeehead@vnrvjiet.in
+
+Every year there will be at least 130 students in the EEE department including the regular and lateral entry students.
+there are 41 faculty members in EEE departmenT
+
+The Department of Electrical & Electronics Engineering (EEE) offers U.G and P.G programs in Electrical Engineering Discipline. The department has a rich tradition of teaching and research and is widely recognized to be a pioneer in Electrical Engineering Education. The Department is recognized as a Research Centre in Electrical and Electronics Engineering. The research work in the department is vibrant with the support of eminent professors like Dr.M.Rama Moorthy, former Director General, CPRI taking a keen interest in guiding the faculty members. The research interests of the faculty members encompass a wide gamut of sub-disciplines of Electrical Engineering. The Department takes pride in its ability to nurture students who win gold medals at the university level consistently. We also take up the social responsibility of inculcating awareness about Energy Conservation by promoting programs about the same. Collaboration with industries for timely amendments of curriculum and laboratories is another credential of the department.
+
+ABOUT THE COLLEGE
+VNR Vignana Jyothi Institute of Engineering and Technology (VNRVJIET) is
+accredited by NAAC with an A++ grade and ranked in the 151-200 band in the
+Engineering Category by NIRF. Rooted in the philosophy of Vignana Jyothi, the
+institution envisions education as a transformative process of “Presencing,” enabling
+individuals and communities to engage deeply with knowledge and shape the future.
+With a strong foundation built on quality, integrity, and a relentless pursuit of
+excellence, VNRVJIET fosters innovation and research while equipping students with
+the skills and mindset required to meet industry demands and societal needs.
+
+ABOUT THE DEPARTMENT
+The Department of Electrical & Electronics Engineering (EEE), established in 1995,
+offers a B.Tech. program in Electrical and Electronics Engineering and two M.Tech.
+programs specializing in Power Electronics and Power Systems. The B.Tech. program
+is accredited for six years, while the M.Tech. (Power Electronics) program holds a threeyear accreditation from the National Board of Accreditation (NBA). Recognized as a
+Research Center by JNTU Hyderabad, the department comprises 42 highly qualified
+faculty members, including 24 Ph.D. holders and 15 pursuing doctoral research,
+guiding nine Ph.D. scholars. Equipped with state-of-the-art infrastructure, the
+department maintains strong industry and academic collaborations through MoUs
+with reputed institutions and organizations.
+The Department offers minor degree in:
+• Artificial Intelligence and Machine Learning
+• Internet of Things
+• Cyber Security
+• Data Science
+• Innovation and Entrepreneurship
+
+DEPARTMENT INFRASTRUCTURE
+The Department believes in imparting laboratory-based teaching. Laboratory experience and
+projects are an integral part of the program in each semester. Core laboratories like Electronic
+Circuits and Devices, Electrical Machines,
+Power systems, Control systems, and
+Instrumentation provide high-quality
+visualization and strengthen Electrical
+Engineering fundamentals. Power Electronics,
+Power Systems, Renewable Energy, Electric
+Vehicle, Artificial Intelligence, and Machine
+Learning are also emphasized for students at
+both UG & PG levels. Advanced research
+organizations sponsored state-of-the-art
+laboratories like Digital Signal Processingbased control of Power Electronic Drives and
+Advanced Computer Applications to Power
+Systems, providing hands-on experience to
+make students industry-ready.
+The department is equipped with facilities like digital classrooms, a seminar hall, and a department
+library. Advanced software like PSCAD/EMTDC, MATLAB, CASPOC, MiPOWER, ETAP 14.0, LABVIEW,
+MULTISIM, and ANSYS MAXWELL are available in Computer & Hardware Laboratories to carry out
+B.Tech., M.Tech. projects, and research work.
+
+RESEARCH & CONSULTANCY
+We have undertaken projects in collaboration with HBL, Rachana Machines Pvt. Ltd. and Magarita
+Tech. Additionally, we have a state-of-the-art Research and Development Center affiliated with
+JNTU-H. The department has provided corporate training to Hyundai Motors India Ltd. and Anchor
+by Panasonic-certified electricians.
+EEE Department has the following Domains for Research & Consultancy.
+
+PROFESSIONAL SOCIETIES
+Students are part of professional societies such as IE(I), IEEE Power Electronics and Reliability
+Society, and IEEE Power and Energy Society that organize various technical events in the
+department.
+These societies provide a platform for students to enhance their technical knowledge, engage in
+research activities, and collaborate with industry experts.
+
+
+TRAINING
+Software Placement Training
+High-Intensity Technical Training, Aptitude & Reasoning, C & DS,
+Python, Advanced Coding Skills, A Mock-Interview Practice Session,
+Company-Specific Training.
+Core Placement Training
+Electric Vehicle, Renewable Energy, Automation, Embedded Systems,
+VLSI, Drone Technology, Robotics.
+Certification Courses
+Oracle SQL, Soft Computing Techniques, and Real-Time Control of
+Electrical Systems, Solar PV Technologies and Embedded Systems
+Applications, Automation with PLC & SCADA - Siemens, Machine
+Learning for Engineering Applications.
+
+INTERNSHIPS AND PLACEMENTS
+Students undergo a mandatory 45 days internship program after 6th semester. Students
+go as intern to companies like Schnieder, DRDO, BHEL, AP GENCO, TRANSCO and to premiere
+institutions like IIT’s.
+Students receive annual training in core areas such as Renewable Energy, Electric Vehicles,
+Embedded Systems, and Automation, as well as in software domains including Soft Skills, Aptitude,
+Basic and Advanced Coding, and Machine Learning. Our students secure placements in PSUs, the
+IT industry, and various state and central government organizations with competitive salary
+packages
+Additionally, our students have also got internship in firms like Worley Services India pvt ltd,
+NPCIL Kaiga Site, Axis Energy pvt ltd and CPRI. We have also provided on campus internship
+opportunities on autonomous vehicles in collaboration with Magarita Tech

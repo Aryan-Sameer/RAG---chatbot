@@ -19,7 +19,7 @@
 
 ### Knowledge base management (Admin)
 - Password-protected admin panel (`/admin`, default password: `password`).
-- **Upload documents** — drag-and-drop or file picker; files are saved to `backend/assistant/data`.
+- **Upload documents** — drag-and-drop or file picker; files are saved to `backend/database/context`.
 - **Setup database** — initializes the ChromaDB collection.
 - **Smart ingest** — embeds and indexes documents; skips re-ingestion when files are unchanged (manifest-based).
 - **Force re-ingest** — deletes and rebuilds the vector collection.
@@ -41,7 +41,7 @@
 
 ```
 ┌─────────────┐     REST API      ┌──────────────────────────────────────┐
-│  React UI   │ ◄──────────────► │  FastAPI (backend/main.py)            │
+│  React UI   │ ◄──────────────►  │  FastAPI (backend/main.py)           │
 │  VNRGPT     │                   │  • /chat  • /setup  • /ingest        │
 └─────────────┘                   │  • /knowledgebase/upload|files       │
                                   └──────────────┬───────────────────────┘
@@ -49,10 +49,10 @@
                     ┌────────────────────────────┼────────────────────────────┐
                     ▼                            ▼                            ▼
              ChromaDB vectors            HuggingFace embed              Ollama LLM
-             (assistant/chroma_db)       + reranker                     (localhost:11434)
+             (database/chroma_db)        + reranker                     (localhost:11434)
                     ▲
                     │
-             assistant/data/  ← uploaded & ingested documents
+             database/context/  ← uploaded & ingested documents
 ```
 
 ---
@@ -141,7 +141,7 @@ Open **http://localhost:5173**
 |--------|----------|-------------|
 | `GET`  | `/health` | Service health check |
 | `POST` | `/setup` | Initialize ChromaDB collection |
-| `POST` | `/ingest?force_rebuild=false` | Ingest files from `assistant/data` |
+| `POST` | `/ingest?force_rebuild=false` | Ingest files from `database/context` |
 | `GET`  | `/knowledgebase/files` | List files in the data folder |
 | `POST` | `/knowledgebase/upload` | Upload one or more files (`multipart/form-data`, field: `files`) |
 | `POST` | `/chat` | Ask a question (`{ "question": "...", "model": "...", "top_k": 3 }`) |
@@ -154,12 +154,13 @@ Open **http://localhost:5173**
 Advanced RAG/
 ├── backend/
 │   ├── main.py                 # FastAPI app & routes
-│   └── assistant/
-│       ├── setup.py            # ChromaDB initialization
-│       ├── ingest.py           # Upload save, chunking, embedding, indexing
-│       ├── answer.py           # Retrieve, rerank, generate with Ollama
-│       ├── query.py            # CLI query utility
-│       ├── data/               # Knowledge-base documents (upload target)
+│   ├── controllers/
+│   │   ├── setup.py            # ChromaDB initialization
+│   │   ├── ingest.py           # Upload save, chunking, embedding, indexing
+│   │   ├── answer.py           # Retrieve, rerank, generate with Ollama
+│   │   └── query.py            # CLI query utility
+│   └── database/
+│       ├── context/            # Knowledge-base documents (upload target)
 │       └── chroma_db/          # Persistent vector store
 ├── frontend/
 │   └── src/
@@ -177,8 +178,8 @@ Advanced RAG/
 | Setting | Location | Default |
 |---------|----------|---------|
 | API URL | `frontend/src/config.js` | `http://localhost:8000` |
-| Data folder | `backend/main.py` → `DATA_PATH` | `./assistant/data` |
-| Vector DB | `backend/main.py` → `DB_PATH` | `./assistant/chroma_db` |
+| Data folder | `backend/main.py` → `DATA_PATH` | `./database/context` |
+| Vector DB | `backend/main.py` → `DB_PATH` | `./database/chroma_db` |
 | Ollama model | `POST /chat` body `model` | `llama3.2:latest` |
 | Chunks retrieved | `POST /chat` body `top_k` | `3` |
 
@@ -190,7 +191,7 @@ Advanced RAG/
 |-------|------------|
 | `ImportError` for LangChain packages | Recreate venv and `pip install -r requirements.txt` (pinned versions). |
 | Chat returns 500 | Ensure Ollama is running and the model is pulled. Run setup + ingest first. |
-| Empty answers | Confirm files exist in `backend/assistant/data` and ingestion completed successfully. |
+| Empty answers | Confirm files exist in `backend/database/context` and ingestion completed successfully. |
 | CORS errors | Frontend must run on `localhost:5173` or `3000` (configured in `main.py`). |
 | Slow first query | Embedding/reranker models load at startup in `answer.py`; subsequent queries are faster. |
 
