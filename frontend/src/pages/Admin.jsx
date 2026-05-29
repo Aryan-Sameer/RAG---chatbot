@@ -1,152 +1,30 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { API_BASE } from "../config";
+import React from "react";
+import { useAdmin } from "../lib/hooks";
 
 const ALLOWED_EXTENSIONS = ".pdf,.docx,.xlsx,.xls,.md,.txt";
 
 const Admin = () => {
-  const [setupStatus, setSetupStatus] = useState(null);
-  const [setupMsg, setSetupMsg] = useState("");
-  const [ingestStatus, setIngestStatus] = useState(null);
-  const [ingestMsg, setIngestMsg] = useState("");
-  const [isActionRunning, setIsActionRunning] = useState(false);
-  const [dbReady, setDbReady] = useState(false);
-
-  const [kbFiles, setKbFiles] = useState([]);
-  const [kbFilesStatus, setKbFilesStatus] = useState("idle");
-  const [kbFilesMsg, setKbFilesMsg] = useState("");
-
-  const [uploadStatus, setUploadStatus] = useState(null);
-  const [uploadMsg, setUploadMsg] = useState("");
-  const [autoIngestAfterUpload, setAutoIngestAfterUpload] = useState(true);
-  const fileInputRef = useRef(null);
-
-  const runSetup = async ({ silent = false } = {}) => {
-    if (!silent) {
-      setSetupStatus("loading");
-      setSetupMsg("");
-    }
-    try {
-      const res = await axios.post(`${API_BASE}/setup`);
-      if (!silent) {
-        setSetupStatus("success");
-        setSetupMsg(res.data.message);
-      }
-      setDbReady(true);
-      return true;
-    } catch (err) {
-      if (!silent) {
-        setSetupStatus("error");
-        setSetupMsg(err.response?.data?.detail || "Setup failed");
-      }
-      setDbReady(false);
-      return false;
-    }
-  };
-
-  const handleSetup = async () => {
-    if (isActionRunning) return;
-    setIsActionRunning(true);
-    try {
-      await runSetup();
-    } finally {
-      setIsActionRunning(false);
-    }
-  };
-
-  const fetchKnowledgebaseFiles = async () => {
-    setKbFilesStatus("loading");
-    setKbFilesMsg("");
-    try {
-      const res = await axios.get(`${API_BASE}/knowledgebase/files`);
-      setKbFiles(Array.isArray(res.data?.files) ? res.data.files : []);
-      setKbFilesStatus("success");
-    } catch (err) {
-      setKbFilesStatus("error");
-      setKbFilesMsg(err.response?.data?.detail || "Failed to load knowledge-base files");
-    }
-  };
-
-  useEffect(() => {
-    fetchKnowledgebaseFiles();
-  }, []);
-
-  const handleIngest = async (forceRebuild = false, { bypassLock = false } = {}) => {
-    if (!bypassLock && isActionRunning) return;
-    const manageLock = !bypassLock;
-    if (manageLock) setIsActionRunning(true);
-    setIngestStatus("loading");
-    setIngestMsg("");
-
-    try {
-      const setupOk = dbReady ? true : await runSetup({ silent: true });
-      if (!setupOk) {
-        setIngestStatus("error");
-        setIngestMsg("Database setup failed. Run Step 1 first, then try again.");
-        return;
-      }
-
-      const res = await axios.post(`${API_BASE}/ingest`, null, {
-        params: { force_rebuild: forceRebuild },
-      });
-
-      setIngestStatus("success");
-      setDbReady(true);
-      const detail = res.data.reingested
-        ? res.data.message
-        : res.data.message || "No changes detected — ingestion skipped.";
-      setIngestMsg(detail);
-      await fetchKnowledgebaseFiles();
-    } catch (err) {
-      setIngestStatus("error");
-      setIngestMsg(err.response?.data?.detail || "Ingestion failed");
-    } finally {
-      if (manageLock) setIsActionRunning(false);
-    }
-  };
-
-  const handleUpload = async (fileList) => {
-    if (!fileList?.length || isActionRunning) return;
-
-    setIsActionRunning(true);
-    setUploadStatus("loading");
-    setUploadMsg("");
-
-    const formData = new FormData();
-    Array.from(fileList).forEach((file) => formData.append("files", file));
-
-    try {
-      const res = await axios.post(`${API_BASE}/knowledgebase/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      const savedCount = res.data.saved?.length ?? 0;
-      const errorNote =
-        res.data.errors?.length > 0 ? ` (${res.data.errors.length} skipped)` : "";
-      setUploadStatus("success");
-      setUploadMsg(`${res.data.message || "Upload complete."}${errorNote}`);
-      await fetchKnowledgebaseFiles();
-
-      if (autoIngestAfterUpload && savedCount > 0) {
-        await handleIngest(false, { bypassLock: true });
-      }
-    } catch (err) {
-      setUploadStatus("error");
-      setUploadMsg(err.response?.data?.detail || "Upload failed");
-    } finally {
-      setIsActionRunning(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
-
-  const onFileInputChange = (e) => {
-    if (e.target.files?.length) handleUpload(e.target.files);
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    if (e.dataTransfer.files?.length) handleUpload(e.dataTransfer.files);
-  };
+  const {
+    setupStatus,
+    setupMsg,
+    ingestStatus,
+    ingestMsg,
+    isActionRunning,
+    dbReady,
+    kbFiles,
+    kbFilesStatus,
+    kbFilesMsg,
+    uploadStatus,
+    uploadMsg,
+    autoIngestAfterUpload,
+    setAutoIngestAfterUpload,
+    fileInputRef,
+    handleSetup,
+    handleIngest,
+    fetchKnowledgebaseFiles,
+    onFileInputChange,
+    onDrop,
+  } = useAdmin();
 
   return (
     <div className="h-full overflow-y-auto bg-linear-to-b from-stone-100 to-stone-200">

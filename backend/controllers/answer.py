@@ -34,15 +34,19 @@ reranker = CrossEncoder(
     device="cpu",
 )
 
-PROMPT_TEMPLATE = PromptTemplate.from_template(
-    """You are a helpful assistant. answer the questions based on the provided context only.
-    if the question is not related to the context, say "I dont know"
+PROMPT_TEMPLATE = PromptTemplate.from_template( """
+    You are a helpful AI assistant for VNR VJIET campus.
+    Answer the questions in short based on the provided context only.
+    If the question is not related to the context, say "I dont know." or "Sorry I can't help you with that."
+    Greet the users if they greet you.
 
     Context:
     {context}
 
     Question: {question}
-    Answer:"""
+    Answer:
+                                               
+    """
 )
 
 

@@ -10,7 +10,6 @@ from pypdf import PdfReader
 from langchain_core.documents import Document as LCDocument
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_experimental.text_splitter import SemanticChunker
 from db_connection import get_chroma_client
 
@@ -192,10 +191,9 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
         client=client,
         embedding_function=embeddings,
     )
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=450,
-        chunk_overlap=150,
-        separators=["\n\n", "\n", " ", ""],
+    splitter = SemanticChunker(
+        embeddings,
+        breakpoint_threshold_type="percentile"
     )
 
     files_processed = 0
@@ -233,9 +231,3 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
 if __name__ == "__main__":
     result = run_folder_ingestion()
     print(result)
-
-
-    # splitter = SemanticChunker(
-    #     embeddings,
-    #     breakpoint_threshold_type="percentile"
-    # )

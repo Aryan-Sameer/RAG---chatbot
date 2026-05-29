@@ -1,59 +1,19 @@
-import { useState, useRef, useEffect } from "react";
+import { useChat } from "../lib/hooks";
 import AssistantMessage from "../components/AssistantMessage";
 import TypingIndicator from "../components/TypingIndicator";
-import { API_BASE } from "../config";
 import "../components/assistant.css";
 
 export default function Home() {
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      text: "Hello! I'm VNRGPT, your campus. I'll help you assist with your queries about the campus.",
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef(null);
-  const inputRef = useRef(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  async function sendMessage() {
-    const question = input.trim();
-    if (!question || loading) return;
-
-    setMessages((prev) => [...prev, { role: "user", text: question }]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Something went wrong");
-      setMessages((prev) => [...prev, { role: "assistant", text: data.answer }]);
-    } catch (e) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: `Error: ${e.message}`, isError: true },
-      ]);
-    } finally {
-      setLoading(false);
-      inputRef.current?.focus();
-    }
-  }
-
-  function handleKey(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }
+  const {
+    messages,
+    input,
+    setInput,
+    loading,
+    bottomRef,
+    inputRef,
+    sendMessage,
+    handleKey,
+  } = useChat();
 
   return (
     <section className="assistant-page h-full">

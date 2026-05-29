@@ -1,6 +1,6 @@
 # VNRGPT
 
-**VNRGPT** is a Retrieval-Augmented Generation (RAG) assistant for the EEE department. It answers student questions using department documents stored in a local vector database, powered by LangChain, ChromaDB, Hugging Face embeddings, cross-encoder reranking, and Ollama for text generation.
+**VNRGPT** is a Retrieval-Augmented Generation (RAG) assistant for VNR VJIET campus. It answers student questions using department documents stored in a local vector database, powered by LangChain, ChromaDB, Hugging Face embeddings, cross-encoder reranking, and Ollama for text generation.
 
 ---
 
@@ -10,6 +10,7 @@
 - Clean, responsive chat UI for asking questions about ingested course materials.
 - Streaming-style loading indicator while the model generates a response.
 - Grounded answers built from retrieved document chunks (not open-ended hallucination by default).
+- health check indicating connection status witht he backend.
 
 ### Advanced RAG pipeline
 - **Embedding model:** `nomic-ai/nomic-embed-text-v1.5` via LangChain Hugging Face integration.
@@ -18,7 +19,6 @@
 - **Generation:** Ollama local LLM (configurable model, default in API: `llama3.2:latest`).
 
 ### Knowledge base management (Admin)
-- Password-protected admin panel (`/admin`, default password: `password`).
 - **Upload documents** — drag-and-drop or file picker; files are saved to `backend/database/context`.
 - **Setup database** — initializes the ChromaDB collection.
 - **Smart ingest** — embeds and indexes documents; skips re-ingestion when files are unchanged (manifest-based).
@@ -87,7 +87,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-> First run will download embedding and reranker models from Hugging Face (may take several minutes).
+> First run will download embedding and reranker models from Hugging Face (may take several minutes and requires internet).
+> Once the models are loaded, the application can run locally without needing internet.
 
 ### 2. Frontend dependencies
 
@@ -127,7 +128,7 @@ Open **http://localhost:5173**
 
 ## Typical workflow
 
-1. Open **Admin** (`/admin`) and sign in.
+1. Open **Admin** (`/admin`).
 2. **Upload** PDFs, DOCX, or other supported files.
 3. Run **Setup** (first time only) to initialize ChromaDB.
 4. Run **Smart ingest** (or enable auto-ingest after upload).
@@ -197,12 +198,9 @@ Advanced RAG/
 
 ---
 
-## Security note
-
-The admin panel uses a simple client-side password for demonstration. **Do not deploy to production** without proper authentication, HTTPS, and environment-based secrets.
+## Future Enhancements
+- Hybrid search (semantic + Key-word search)
+- Meta-data filtering (to seach based on the source)
+- STT and TTS (for voice based interaction)
 
 ---
-
-## License
-
-Academic / departmental use. Extend and adapt as needed for VNR Vignana Jyothi Institute of Engineering and Technology EEE department workflows.
