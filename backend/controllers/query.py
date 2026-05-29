@@ -3,6 +3,7 @@
 import argparse
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+from db_connection import get_chroma_client
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
@@ -37,9 +38,10 @@ def query_database(question, db_path="./database/chroma_db", n_results=5):
     # Connect to ChromaDB
     print(f"→ Connecting to ChromaDB at {db_path}...")
     try:
+        client = get_chroma_client(db_path)
         collection = Chroma(
             collection_name="documents",
-            persist_directory=db_path,
+            client=client,
             embedding_function=model,
         )
         print(f"✓ Connected to collection with {collection._collection.count()} documents")

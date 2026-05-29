@@ -9,6 +9,7 @@ from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import OllamaLLM
+from db_connection import get_chroma_client
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 RERANKER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -68,9 +69,10 @@ def query_and_answer(question, db_path="./database/chroma_db", n_results=3, mode
     # Connect to ChromaDB
     print(f"→ Connecting to ChromaDB at {db_path}...")
     try:
+        client = get_chroma_client(db_path)
         vectorstore = Chroma(
             collection_name="documents",
-            persist_directory=db_path,
+            client=client,
             embedding_function=embedding_model,
         )
         collection = vectorstore._collection

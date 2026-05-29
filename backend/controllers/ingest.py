@@ -11,6 +11,8 @@ from langchain_core.documents import Document as LCDocument
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
+from db_connection import get_chroma_client
 
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".xls", ".md", ".txt"}
 COLLECTION_NAME = "documents"
@@ -175,21 +177,19 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
         }
 
     embeddings = _build_embedding_model()
+    client = get_chroma_client(db_path)
+
     if force_rebuild or changed:
         try:
-            existing_store = Chroma(
-                collection_name=COLLECTION_NAME,
-                persist_directory=db_path,
-                embedding_function=embeddings,
-            )
-            existing_store.delete_collection()
+            client.delete_collection(COLLECTION_NAME)
             print(f"✓ Deleted existing collection '{COLLECTION_NAME}' for rebuild.")
         except Exception:
             # Collection might not exist yet, which is fine.
             pass
+
     vectorstore = Chroma(
         collection_name=COLLECTION_NAME,
-        persist_directory=db_path,
+        client=client,
         embedding_function=embeddings,
     )
     splitter = RecursiveCharacterTextSplitter(
@@ -233,3 +233,9 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
 if __name__ == "__main__":
     result = run_folder_ingestion()
     print(result)
+
+
+    # splitter = SemanticChunker(
+    #     embeddings,
+    #     breakpoint_threshold_type="percentile"
+    # )

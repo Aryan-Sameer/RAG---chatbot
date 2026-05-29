@@ -1,5 +1,7 @@
 import sys
 import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "controllers"))
+
 from typing import List
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query
@@ -15,8 +17,6 @@ from controllers.ingest import (
 )
 from controllers.answer import query_and_answer
  
-sys.path.append(os.path.join(os.path.dirname(__file__), "controllers"))
-
 app = FastAPI()
 
 app.add_middleware(
