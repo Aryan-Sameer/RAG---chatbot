@@ -167,7 +167,11 @@ Advanced RAG/
 │   └── src/
 │       ├── pages/Home.jsx      # Chat UI
 │       ├── pages/Admin.jsx     # Admin & ingestion UI
-│       └── components/         # Navbar, layout, chat components
+│       ├── lib/
+│       │   ├── api.js          # API calls to backend
+│       │   └── hooks.js        # React hooks for chat & admin
+│       ├── components/         # Navbar, layout, chat components
+│       └── App.jsx             # Main application component
 ├── requirements.txt
 └── README.md
 ```
