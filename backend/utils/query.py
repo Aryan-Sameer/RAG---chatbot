@@ -1,5 +1,3 @@
-# query.py - Query the RAG system and retrieve top results
-
 import argparse
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
@@ -7,8 +5,14 @@ from db_connection import get_chroma_client
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
-def query_database(question, db_path="./database/chroma_db", n_results=5):
+import os
+
+def query_database(question, db_path=None, n_results=5):
     """Query ChromaDB and return top results"""
+    if db_path is None:
+        utils_dir = os.path.dirname(os.path.abspath(__file__))
+        backend_dir = os.path.dirname(utils_dir)
+        db_path = os.path.join(backend_dir, "database", "chroma_db")
     
     # Load embedding model
     print(f"→ Loading nomic-embed-text-v1 model...")
@@ -84,7 +88,7 @@ def query_database(question, db_path="./database/chroma_db", n_results=5):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Query the RAG system")
     parser.add_argument("question", help="Question to ask")
-    parser.add_argument("--db", default="./database/chroma_db", help="Database path (default: ./database/chroma_db)")
+    parser.add_argument("--db", default=None, help="Database path (default: backend/database/chroma_db)")
     parser.add_argument("--top-k", type=int, default=5, help="Number of results to return (default: 5)")
     
     args = parser.parse_args()

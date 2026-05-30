@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "controllers"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "utils"))
 
 from typing import List
 

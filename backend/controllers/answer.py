@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 import time
 
 import psutil
@@ -9,17 +10,17 @@ from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import OllamaLLM
+
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
 from db_connection import get_chroma_client
 
 EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 RERANKER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-
 def print_ram():
     process = psutil.Process(os.getpid())
     mem = process.memory_info().rss / 1024 / 1024
     print(f"RAM usage: {mem:.1f} MB")
-
 
 print("→ Loading embedding model...")
 embedding_model = HuggingFaceEmbeddings(
@@ -36,9 +37,9 @@ reranker = CrossEncoder(
 
 PROMPT_TEMPLATE = PromptTemplate.from_template( """
     You are a helpful AI assistant for VNR VJIET campus.
+    Greet the users if they greet you.
     Answer the questions in short based on the provided context only.
     If the question is not related to the context, say "I dont know." or "Sorry I can't help you with that."
-    Greet the users if they greet you.
 
     Context:
     {context}

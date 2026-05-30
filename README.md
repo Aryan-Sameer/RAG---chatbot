@@ -158,11 +158,11 @@ Advanced RAG/
 │   ├── controllers/
 │   │   ├── setup.py            # ChromaDB initialization
 │   │   ├── ingest.py           # Upload save, chunking, embedding, indexing
-│   │   ├── answer.py           # Retrieve, rerank, generate with Ollama
-│   │   └── query.py            # CLI query utility
-│   └── database/
-│       ├── context/            # Knowledge-base documents (upload target)
-│       └── chroma_db/          # Persistent vector store
+│   │   └── answer.py           # Retrieve, rerank, generate with Ollama
+│   ├── database/
+│   │   ├── context/            # Knowledge-base documents (upload target)
+│   │   └── chroma_db/          # Persistent vector store
+|   └── utils/                 # Helper functions
 ├── frontend/
 │   └── src/
 │       ├── pages/Home.jsx      # Chat UI
@@ -172,8 +172,7 @@ Advanced RAG/
 │       │   └── hooks.js        # React hooks for chat & admin
 │       ├── components/         # Navbar, layout, chat components
 │       └── App.jsx             # Main application component
-├── requirements.txt
-└── README.md
+└── requirements.txt
 ```
 
 ---

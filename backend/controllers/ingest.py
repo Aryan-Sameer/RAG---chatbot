@@ -1,7 +1,8 @@
-"""
-ingest.py - Multi-format folder ingestion (PDF, DOCX, XLSX, MD, TXT)
-"""
 import os
+import sys
+# Add utils to sys.path
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
+
 import json
 from datetime import datetime, timezone
 import pandas as pd
@@ -102,11 +103,6 @@ def _write_manifest(db_path, files_manifest):
 
 
 def save_uploaded_files(folder_path, uploads):
-    """Save uploaded files to the knowledge-base folder.
-
-    uploads: iterable of (filename, file_bytes)
-    Returns list of saved file metadata dicts.
-    """
     os.makedirs(folder_path, exist_ok=True)
     saved = []
     errors = []
@@ -182,9 +178,8 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
         try:
             client.delete_collection(COLLECTION_NAME)
             print(f"✓ Deleted existing collection '{COLLECTION_NAME}' for rebuild.")
-        except Exception:
-            # Collection might not exist yet, which is fine.
-            pass
+        except Exception as e:
+            print(f"Error deleting collection: {e}")
 
     vectorstore = Chroma(
         collection_name=COLLECTION_NAME,

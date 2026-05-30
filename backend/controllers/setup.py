@@ -1,6 +1,8 @@
-#setup.py - Initialize ChromaDB for RAG system on Jetson Orin Nano
-
 import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
+
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from db_connection import get_chroma_client
@@ -9,14 +11,11 @@ EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
 
 def setup_database(db_path="./database/chroma_db"):
     """Initialize ChromaDB with persistent storage"""
-    
-    # Create directory if it doesn't exist
+
     os.makedirs(db_path, exist_ok=True)
-    
-    # Initialize ChromaDB client using the shared helper
+
     client = get_chroma_client(db_path)
-    
-    # Create or get collection
+
     try:
         client.get_or_create_collection(
             name="documents",
