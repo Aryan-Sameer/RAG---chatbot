@@ -162,7 +162,7 @@ Advanced RAG/
 │   ├── database/
 │   │   ├── context/            # Knowledge-base documents (upload target)
 │   │   └── chroma_db/          # Persistent vector store
-|   └── utils/                 # Helper functions
+|   └── utils/                  # Helper functions
 ├── frontend/
 │   └── src/
 │       ├── pages/Home.jsx      # Chat UI

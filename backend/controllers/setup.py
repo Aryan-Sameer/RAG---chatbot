@@ -1,44 +1,29 @@
 import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
 
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
-from db_connection import get_chroma_client
+from utils.db_connection import get_chroma_client
 
-EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
+from utils.config import EMBEDDING_MODEL_NAME
+from utils.config import COLLECTION_NAME
 
 def setup_database(db_path="./database/chroma_db"):
-    """Initialize ChromaDB with persistent storage"""
-
     os.makedirs(db_path, exist_ok=True)
-
     client = get_chroma_client(db_path)
-
+    
     try:
-        client.get_or_create_collection(
-            name="documents",
-            metadata={"hnsw:space": "cosine"}
+        collection = client.get_or_create_collection(
+            name=COLLECTION_NAME,
+            metadata={
+                "hnsw:space": "cosine",
+                "embedding_model": EMBEDDING_MODEL_NAME
+            }
         )
-        embeddings = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL_NAME,
-            model_kwargs={"device": "cpu", "trust_remote_code": True},
-        )
-        collection = Chroma(
-            collection_name="documents",
-            client=client,
-            embedding_function=embeddings,
-        )
-        print(f"✓ Collection 'documents' ready")
-        print(f"✓ Database location: {db_path}")
-        print(f"✓ Current document count: {collection._collection.count()}")
-        
+        print(f"✓ Collection ready, {collection.count()} documents")
     except Exception as e:
         print(f"✗ Error creating collection: {e}")
         return False
     
-    print("\n✓ Setup complete!")
     return True
 
 if __name__ == "__main__":

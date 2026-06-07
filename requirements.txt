@@ -3,8 +3,8 @@ chromadb==0.4.24
 sentence-transformers==2.6.1
 numpy<2.0
 huggingface-hub>=0.34.0,<1.0
-einops
-fastapi[standard]
+einops==0.8.2
+fastapi[standard]==0.136.3
 
 # langchain dependencies
 langchain==0.2.17
@@ -16,10 +16,10 @@ langchain-ollama==0.1.3
 langchain-experimental==0.0.64
 
 # for ingestion
-pandas
-python-docx
-pypdf
-openpyxl
+pandas==3.0.3
+python-docx==1.2.0
+pypdf==6.12.2
+openpyxl==3.1.5
 
 # for RAM monitoring
-psutil
+psutil==7.2.2

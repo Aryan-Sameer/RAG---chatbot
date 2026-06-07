@@ -1,7 +1,4 @@
 import os
-import sys
-# Add utils to sys.path
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
 
 import json
 from datetime import datetime, timezone
@@ -12,13 +9,12 @@ from langchain_core.documents import Document as LCDocument
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_experimental.text_splitter import SemanticChunker
-from db_connection import get_chroma_client
 
-SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".xls", ".md", ".txt"}
-COLLECTION_NAME = "documents"
-MANIFEST_FILE = ".ingest_manifest.json"
-EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
-
+from utils.db_connection import get_chroma_client
+from utils.config import EMBEDDING_MODEL_NAME
+from utils.config import MANIFEST_FILE
+from utils.config import COLLECTION_NAME
+from utils.config import SUPPORTED_EXTENSIONS
 
 def _build_embedding_model():
     return HuggingFaceEmbeddings(
@@ -60,7 +56,6 @@ def _list_supported_files(folder_path):
         files.append(file_path)
     return files
 
-
 def _file_signature(file_path):
     stat = os.stat(file_path)
     return {
@@ -68,17 +63,14 @@ def _file_signature(file_path):
         "mtime_ns": stat.st_mtime_ns
     }
 
-
 def _manifest_path(db_path):
     return os.path.join(db_path, MANIFEST_FILE)
-
 
 def _build_current_manifest(files):
     return {
         os.path.basename(path): _file_signature(path)
         for path in files
     }
-
 
 def _read_previous_manifest(db_path):
     manifest_path = _manifest_path(db_path)
@@ -91,7 +83,6 @@ def _read_previous_manifest(db_path):
     except Exception:
         return {}
 
-
 def _write_manifest(db_path, files_manifest):
     os.makedirs(db_path, exist_ok=True)
     payload = {
@@ -100,7 +91,6 @@ def _write_manifest(db_path, files_manifest):
     }
     with open(_manifest_path(db_path), "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
-
 
 def save_uploaded_files(folder_path, uploads):
     os.makedirs(folder_path, exist_ok=True)
@@ -126,7 +116,6 @@ def save_uploaded_files(folder_path, uploads):
 
     return saved, errors
 
-
 def list_knowledge_base_files(folder_path="./database/context"):
     if not os.path.exists(folder_path):
         return []
@@ -140,7 +129,6 @@ def list_knowledge_base_files(folder_path="./database/context"):
             "extension": os.path.splitext(file_path)[1].lower(),
         })
     return records
-
 
 def run_folder_ingestion(folder_path="./database/context", db_path="./database/chroma_db", force_rebuild=False):
     if not os.path.exists(folder_path):
@@ -188,7 +176,8 @@ def run_folder_ingestion(folder_path="./database/context", db_path="./database/c
     )
     splitter = SemanticChunker(
         embeddings,
-        breakpoint_threshold_type="percentile"
+        breakpoint_threshold_type="percentile",
+        breakpoint_threshold_amount=90
     )
 
     files_processed = 0

@@ -1,8 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), "controllers"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "utils"))
-
 from typing import List
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query
@@ -17,7 +12,10 @@ from controllers.ingest import (
     SUPPORTED_EXTENSIONS,
 )
 from controllers.answer import query_and_answer
- 
+
+from utils.config import DB_PATH
+from utils.config import DATA_PATH
+
 app = FastAPI()
 
 app.add_middleware(
@@ -27,9 +25,6 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
-
-DB_PATH = "./database/chroma_db"
-DATA_PATH = "./database/context"
 
 class ChatRequest(BaseModel):
     question: str
@@ -75,6 +70,23 @@ def knowledgebase_files():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest):
+    user_query = req.question.strip()
+    if not user_query:
+        raise ValueError("Question cannot be empty")
+    
+    answer = query_and_answer(
+        question=user_query,
+        db_path=DB_PATH,
+        n_results=req.top_k,
+        model=req.model,
+    )
+
+    if answer is None:
+        raise HTTPException(status_code=500, detail="Failed to generate answer.")
+
+    return ChatResponse(answer=answer, success=True)
 
 @app.post("/knowledgebase/upload")
 async def upload_knowledgebase_files(files: List[UploadFile] = File(...)):
@@ -105,22 +117,6 @@ async def upload_knowledgebase_files(files: List[UploadFile] = File(...)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
- 
- 
-@app.post("/chat", response_model=ChatResponse)
-def chat(req: ChatRequest):
-    answer = query_and_answer(
-        question=req.question,
-        db_path=DB_PATH,
-        n_results=req.top_k,
-        model=req.model,
-    )
-
-    if answer is None:
-        raise HTTPException(status_code=500, detail="Failed to generate answer.")
-
-    return ChatResponse(answer=answer, success=True)
- 
  
 @app.get("/health")
 def health():

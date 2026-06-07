@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 import time
 
 import psutil
@@ -11,11 +10,10 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import OllamaLLM
 
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils"))
-from db_connection import get_chroma_client
+from utils.db_connection import get_chroma_client
 
-EMBEDDING_MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
-RERANKER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+from utils.config import EMBEDDING_MODEL_NAME
+from utils.config import RERANKER_MODEL_NAME
 
 def print_ram():
     process = psutil.Process(os.getpid())
@@ -53,9 +51,8 @@ PROMPT_TEMPLATE = PromptTemplate.from_template( """
 
 def call_ollama(prompt, model):
     try:
-        llm = OllamaLLM(model=model, num_ctx=1024, temperature=0)
+        llm = OllamaLLM(model=model, num_ctx=4096, temperature=0.3)
         answer = llm.invoke(prompt)
-        print_ram()
         return (answer or "").strip()
     except Exception as e:
         print(f"✗ Error calling Ollama: {e}")
@@ -69,7 +66,6 @@ def query_and_answer(question, db_path="./database/chroma_db", n_results=3, mode
     # Generate query embedding
     print("→ Generating query embedding...")
     query_embedding = embedding_model.embed_query(question)
-    print_ram()
 
     # Connect to ChromaDB
     print(f"→ Connecting to ChromaDB at {db_path}...")
